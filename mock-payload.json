@@ -1,0 +1,18 @@
+{
+    "issue_id": "django-13933",
+    "repository": {
+        "url": "https://github.com/django/django",
+        "branch": "stable/3.2.x",
+        "language": "Python"
+    },
+    "issue": {
+        "title": "ModelChoiceField invalid_choice validation error displays no value",
+        "description": "ModelChoiceField class clean method does not include the value of the invalid choice in the raises ValidationError. We should pass value into params of self.error_messages['invalid_choice'] so that error template can format it dynamically."
+    },
+    "verification_settings": {
+        "generate_reproduction_test": true,
+        "mutation_testing": true,
+        "max_repair_retries": 3,
+        "risk_threshold": 0.3
+    }
+}
