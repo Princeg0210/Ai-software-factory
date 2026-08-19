@@ -152,7 +152,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Update Stepper visually
     function updateStepper(currentState, history) {
         const stateOrder = [
-            "INIT", 
+            "INIT",
+            "SPEC_READY",
             "LOCALIZATION", 
             "PLANNING", 
             "REPAIR", 
@@ -166,7 +167,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const historyStates = (history || []).map(h => h.state);
 
         stateOrder.forEach(state => {
-            const stepEl = document.getElementById(`step-${state}`) || (state === "MERGE" || state === "TERMINAL_SUCCESS" ? document.getElementById("step-TERMINAL") : null);
+            let stepEl = document.getElementById(`step-${state}`);
+            if (!stepEl) {
+                if (state === "TERMINAL_SUCCESS" || state === "TERMINAL_FAILED") {
+                    stepEl = document.getElementById("step-TERMINAL");
+                }
+            }
             if (!stepEl) return;
 
             if (historyStates.includes(state)) {

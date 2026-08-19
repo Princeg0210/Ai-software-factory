@@ -673,26 +673,51 @@ input:checked + .slider:before {
     color: var(--danger-text);
 }
 
-/* DETERMINISTIC FSM STEPPER */
+/* -------------------------------------------------------------
+   DETERMINISTIC FSM STATE MACHINE PIPELINE STEPPER
+---------------------------------------------------------------- */
 .stepper-panel {
     background-color: var(--bg-surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    padding: 16px 20px;
+    padding: 20px 24px;
+    margin-top: 10px;
 }
 
 .stepper-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 14px;
+    margin-bottom: 20px;
 }
 
 .stepper-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stepper-title::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--primary);
+}
+
+.retry-badge {
     font-size: 12px;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: #21262d;
+    border: 1px solid var(--border);
     color: var(--text-secondary);
 }
 
@@ -701,76 +726,91 @@ input:checked + .slider:before {
     justify-content: space-between;
     align-items: center;
     position: relative;
+    padding: 0 10px;
+}
+
+.stepper-line {
+    position: absolute;
+    top: 16px;
+    left: 40px;
+    right: 40px;
+    height: 3px;
+    background-color: #21262d;
+    z-index: 0;
 }
 
 .step-node {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     z-index: 1;
+    cursor: default;
+    transition: transform 0.2s ease;
 }
 
 .step-circle {
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    background-color: #21262d;
-    border: 1px solid var(--border);
+    background-color: #161b22;
+    border: 2px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
     color: var(--text-secondary);
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .step-label {
     font-size: 11px;
     color: var(--text-tertiary);
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: color 0.25s ease;
+    text-transform: uppercase;
 }
 
+/* ACTIVE STATE */
 .step-node.active .step-circle {
-    background-color: var(--primary);
-    border-color: #58a6ff;
+    background-color: #2563eb;
+    border-color: #60a5fa;
     color: #ffffff;
+    box-shadow: 0 0 14px rgba(37, 99, 235, 0.6);
+    transform: scale(1.1);
 }
 
 .step-node.active .step-label {
-    color: #58a6ff;
-    font-weight: 600;
+    color: #60a5fa;
+    font-weight: 700;
 }
 
+/* COMPLETED / DONE STATE */
 .step-node.done .step-circle {
-    background-color: var(--success);
+    background-color: #238636;
     border-color: #3fb950;
     color: #ffffff;
+    box-shadow: 0 0 10px rgba(35, 134, 54, 0.4);
 }
 
 .step-node.done .step-label {
-    color: var(--success-text);
+    color: #3fb950;
+    font-weight: 600;
 }
 
+/* FAILED STATE */
 .step-node.failed .step-circle {
-    background-color: var(--danger);
+    background-color: #da3633;
     border-color: #f85149;
     color: #ffffff;
+    box-shadow: 0 0 12px rgba(218, 54, 51, 0.6);
 }
 
 .step-node.failed .step-label {
-    color: var(--danger-text);
-}
-
-.stepper-line {
-    position: absolute;
-    top: 14px;
-    left: 20px;
-    right: 20px;
-    height: 2px;
-    background-color: var(--border);
-    z-index: 0;
+    color: #f85149;
+    font-weight: 700;
 }
 
 /* SPINNER */
