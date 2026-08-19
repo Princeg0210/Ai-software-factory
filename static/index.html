@@ -3,332 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Software Factory | Enterprise FSM Autonomous Code Repair</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>AI Software Factory | Autonomous Verification & Code Repair</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body class="dark-theme">
-    <div class="background-glow glow-1"></div>
-    <div class="background-glow glow-2"></div>
-
+<body>
+    <!-- TOP NAVBAR -->
     <header class="top-nav">
         <div class="brand">
-            <div class="brand-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                    <polyline points="2 17 12 22 22 17"></polyline>
-                    <polyline points="2 12 12 17 22 12"></polyline>
-                </svg>
-            </div>
-            <div class="brand-text">
-                <h1>AI Software Factory</h1>
-                <span class="badge badge-accent">v1.0 FSM Orchestrated</span>
-            </div>
+            <div class="brand-icon">⚡</div>
+            <h1>AI Software Factory <span class="version-tag">v1.0 Production</span></h1>
         </div>
 
-        <div class="nav-metrics">
-            <div class="metric-pill">
-                <span class="metric-dot live"></span>
-                <span class="metric-label">Engine:</span>
-                <span class="metric-val" id="engine-status">ONLINE</span>
+        <div class="system-status">
+            <div class="status-badge">
+                <span class="status-dot online"></span>
+                <span>Engine: <strong>Online</strong></span>
             </div>
-            <div class="metric-pill">
-                <span class="metric-label">Ledger:</span>
-                <span class="metric-val" id="ledger-status">PostgreSQL Connected</span>
+            <div class="status-badge">
+                <span>Database: <strong>Connected</strong></span>
             </div>
-            <div class="metric-pill">
-                <span class="metric-label">Sandbox:</span>
-                <span class="metric-val">Air-Gapped Isolation</span>
+            <div class="status-badge">
+                <span>Sandbox: <strong>Isolated</strong></span>
             </div>
         </div>
     </header>
 
-    <main class="dashboard-grid">
-        <!-- LEFT COLUMN: Ingestion & Live FSM Pipeline -->
-        <section class="panel panel-left">
-            <div class="panel-header">
-                <div class="panel-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
+    <!-- MAIN CONTAINER -->
+    <main class="dashboard-container">
+        <div class="dashboard-grid">
+            
+            <!-- LEFT PANEL: ISSUE INGESTION -->
+            <section class="panel">
+                <div class="panel-header">
                     <h2>Issue Ingestion & Task Launcher</h2>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn btn-primary btn-sm" id="btn-load-my-repo" type="button">🚀 Auto-Fill My Repo</button>
-                    <button class="btn btn-secondary btn-sm" id="btn-load-sample" type="button">Load Django-13933</button>
-                </div>
-            </div>
-
-            <form id="issue-form" class="issue-form">
-                <div class="form-group">
-                    <label for="issue-id-input">Issue ID</label>
-                    <input type="text" id="issue-id-input" value="django-13933" required>
-                </div>
-                <div class="form-row">
-                    <div class="form-group flex-2">
-                        <label for="repo-url-input">Repository URL</label>
-                        <input type="text" id="repo-url-input" value="https://github.com/django/django" required>
-                    </div>
-                    <div class="form-group flex-1">
-                        <label for="branch-input">Branch</label>
-                        <input type="text" id="branch-input" value="stable/3.2.x">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="issue-title-input">Title</label>
-                    <input type="text" id="issue-title-input" value="ModelChoiceField invalid_choice validation error displays no value" required>
-                </div>
-                <div class="form-group">
-                    <label for="issue-desc-input">Description / Problem Statement</label>
-                    <textarea id="issue-desc-input" rows="3">ModelChoiceField class clean method does not include the value of the invalid choice in the raises ValidationError. We should pass value into params of self.error_messages['invalid_choice'] so that error template can format it dynamically.</textarea>
-                </div>
-
-                <div class="form-row controls-row">
-                    <div class="toggle-group">
-                        <label class="switch">
-                            <input type="checkbox" id="mutation-toggle" checked>
-                            <span class="slider round"></span>
-                        </label>
-                        <span class="toggle-label">Mutation Testing Gate</span>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-glow" id="btn-launch">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                        </svg>
-                        <span>Dispatch FSM Repair</span>
-                    </button>
-                </div>
-            </form>
-
-            <!-- FSM PIPELINE STEPPER -->
-            <div class="fsm-pipeline-section">
-                <div class="section-title">
-                    <h3>Deterministic FSM State Machine</h3>
-                    <span class="retry-badge" id="retry-counter">Attempts: 0 / 3</span>
-                </div>
-
-                <div class="fsm-stepper">
-                    <div class="step-node" id="step-INIT" data-state="INIT">
-                        <div class="node-icon">01</div>
-                        <div class="node-content">
-                            <h4>INIT</h4>
-                            <p>Ingest & Ledger Commit</p>
-                        </div>
-                    </div>
-                    <div class="step-connector"></div>
-
-                    <div class="step-node" id="step-LOCALIZATION" data-state="LOCALIZATION">
-                        <div class="node-icon">02</div>
-                        <div class="node-content">
-                            <h4>LOCALIZATION</h4>
-                            <p>Tree-Sitter & Ochiai SBFL</p>
-                        </div>
-                    </div>
-                    <div class="step-connector"></div>
-
-                    <div class="step-node" id="step-PLANNING" data-state="PLANNING">
-                        <div class="node-icon">03</div>
-                        <div class="node-content">
-                            <h4>PLANNING</h4>
-                            <p>Hierarchical Strategy</p>
-                        </div>
-                    </div>
-                    <div class="step-connector"></div>
-
-                    <div class="step-node" id="step-REPAIR" data-state="REPAIR">
-                        <div class="node-icon">04</div>
-                        <div class="node-content">
-                            <h4>REPAIR</h4>
-                            <p>CodeAct Search/Replace</p>
-                        </div>
-                    </div>
-                    <div class="step-connector"></div>
-
-                    <div class="step-node" id="step-VERIFICATION" data-state="VERIFICATION">
-                        <div class="node-icon">05</div>
-                        <div class="node-content">
-                            <h4>VERIFICATION</h4>
-                            <p>Flake8 + Sandbox + Mutation</p>
-                        </div>
-                    </div>
-                    <div class="step-connector"></div>
-
-                    <div class="step-node" id="step-HUMAN_REVIEW" data-state="HUMAN_REVIEW">
-                        <div class="node-icon">06</div>
-                        <div class="node-content">
-                            <h4>RISK GATING</h4>
-                            <p>RRI Threshold & Co-Sign</p>
-                        </div>
-                    </div>
-                    <div class="step-connector"></div>
-
-                    <div class="step-node" id="step-TERMINAL" data-state="TERMINAL_SUCCESS">
-                        <div class="node-icon">07</div>
-                        <div class="node-content">
-                            <h4>MERGE</h4>
-                            <p>PR Published / Applied</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- RIGHT COLUMN: Telemetry, SBFL, Diff Viewer & Human Review Gate -->
-        <section class="panel panel-right">
-            <!-- TABS -->
-            <div class="tab-bar">
-                <button class="tab-btn active" data-tab="tab-overview">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="14" width="7" height="7"></rect>
-                        <rect x="3" y="14" width="7" height="7"></rect>
-                    </svg>
-                    Live Telemetry
-                </button>
-                <button class="tab-btn" data-tab="tab-diff">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="16 18 22 12 16 6"></polyline>
-                        <polyline points="8 6 2 12 8 18"></polyline>
-                    </svg>
-                    Unified Patch Diff
-                </button>
-                <button class="tab-btn" data-tab="tab-sbfl">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="20" x2="18" y2="10"></line>
-                        <line x1="12" y1="20" x2="12" y2="4"></line>
-                        <line x1="6" y1="20" x2="6" y2="14"></line>
-                    </svg>
-                    Ochiai SBFL Ranking
-                </button>
-                <button class="tab-btn" data-tab="tab-ledger">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                    </svg>
-                    State Ledger History
-                </button>
-            </div>
-
-            <!-- TAB 1: OVERVIEW & HUMAN GATE -->
-            <div class="tab-content active" id="tab-overview">
-                <!-- SCORECARDS -->
-                <div class="scorecards-grid">
-                    <div class="scorecard">
-                        <span class="card-title">Regression Risk Index (RRI)</span>
-                        <div class="score-display">
-                            <span class="score-number" id="card-rri-score">0.024</span>
-                            <span class="score-tag tag-low" id="card-rri-tag">LOW RISK</span>
-                        </div>
-                        <div class="score-bar-bg">
-                            <div class="score-bar-fill" id="card-rri-bar" style="width: 8%;"></div>
-                        </div>
-                        <span class="card-caption">Threshold: &lt; 0.30 Auto-Merge</span>
-                    </div>
-
-                    <div class="scorecard">
-                        <span class="card-title">Flake8 Syntax Linter</span>
-                        <div class="score-display">
-                            <span class="score-status text-pass" id="card-lint-status">PASSED</span>
-                            <span class="badge badge-success" id="card-lint-badge">0 Syntax Errs</span>
-                        </div>
-                        <span class="card-caption">E999, F821, F822, F831 Active</span>
-                    </div>
-
-                    <div class="scorecard">
-                        <span class="card-title">Mutation Analysis Gate</span>
-                        <div class="score-display">
-                            <span class="score-number" id="card-mutation-score">100%</span>
-                            <span class="score-tag tag-pass" id="card-mutation-tag">MUTANTS KILLED</span>
-                        </div>
-                        <div class="score-bar-bg">
-                            <div class="score-bar-fill fill-green" id="card-mutation-bar" style="width: 100%;"></div>
-                        </div>
-                        <span class="card-caption" id="card-mutation-caption">1 / 1 Injected Mutants Eliminated</span>
+                    <div style="display: flex; gap: 6px;">
+                        <button class="btn btn-secondary btn-sm" id="btn-load-my-repo" type="button">Auto-Fill My Repo</button>
+                        <button class="btn btn-secondary btn-sm" id="btn-load-sample" type="button">Django-13933</button>
                     </div>
                 </div>
 
-                <!-- HUMAN REVIEW CO-SIGN GATE MODAL / BANNER -->
-                <div class="human-gate-banner" id="human-gate-banner">
-                    <div class="gate-header">
-                        <div class="gate-title-group">
-                            <span class="gate-icon">🚨</span>
-                            <div>
-                                <h3>Human Review Gate Required</h3>
-                                <p>RRI exceeds 0.30 or test coverage requires manual sign-off before Git Merge.</p>
-                            </div>
+                <form id="issue-form">
+                    <div class="form-group">
+                        <label for="issue-id-input">Issue ID</label>
+                        <input type="text" id="issue-id-input" value="django-13933" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="repo-url-input">Repository URL</label>
+                            <input type="text" id="repo-url-input" value="https://github.com/Princeg0210/Ai-software-factory" required>
                         </div>
-                        <div class="gate-actions">
-                            <button class="btn btn-success" id="btn-gate-approve">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                Approve & Merge
-                            </button>
-                            <button class="btn btn-danger" id="btn-gate-reject">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
-                                Reject Patch
-                            </button>
+                        <div class="form-group">
+                            <label for="branch-input">Branch</label>
+                            <input type="text" id="branch-input" value="main" required>
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="issue-title-input">Title</label>
+                        <input type="text" id="issue-title-input" value="ModelChoiceField invalid_choice validation error displays no value" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="issue-desc-input">Description / Problem Statement</label>
+                        <textarea id="issue-desc-input" rows="3" required>ModelChoiceField class clean method does not include the value of the invalid choice in the raises ValidationError. We should pass value into params of self.error_messages['invalid_choice'] so that error template can format it dynamically.</textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <div class="toggle-group">
+                            <label class="switch">
+                                <input type="checkbox" id="mutation-toggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span>AST Mutation Testing Gate</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="btn-launch">
+                            <span>Dispatch FSM Repair</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- RIGHT PANEL: TELEMETRY, LOGS, DIFF, AUDIT -->
+            <section class="panel">
+                
+                <!-- METRIC CARDS -->
+                <div class="telemetry-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Regression Risk Index</span>
+                            <span class="metric-tag tag-low" id="card-rri-tag">LOW RISK</span>
+                        </div>
+                        <div class="metric-value" id="card-rri-score">0.024</div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="card-rri-bar" style="width: 24%;"></div>
+                        </div>
+                        <div class="metric-caption">Threshold: &lt; 0.30 Auto-Merge</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Flake8 Syntax Linter</span>
+                            <span class="metric-tag tag-low" id="card-lint-badge">0 SYNTAX ERRS</span>
+                        </div>
+                        <div class="metric-value" id="card-lint-status" style="color: #3fb950;">PASSED</div>
+                        <div class="metric-caption">E999, F821, F822, F831 Active</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Mutation Analysis Gate</span>
+                            <span class="metric-tag tag-low" id="card-mutation-tag">MUTANTS KILLED</span>
+                        </div>
+                        <div class="metric-value" id="card-mutation-score">100%</div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="card-mutation-bar" style="width: 100%;"></div>
+                        </div>
+                        <div class="metric-caption" id="card-mutation-caption">1 / 1 Injected Mutants Eliminated</div>
                     </div>
                 </div>
 
                 <!-- LIVE VERIFIED PULL REQUEST BANNER -->
-                <div class="pr-success-banner" id="pr-success-banner" style="display: none; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; align-items: center; justify-content: space-between;">
-                    <div style="display: flex; align-items: center; gap: 14px;">
-                        <span style="font-size: 24px;">🚀</span>
+                <div class="pr-success-banner" id="pr-success-banner" style="display: none;">
+                    <div class="pr-banner-left">
+                        <span style="font-size: 20px;">🚀</span>
                         <div>
-                            <h3 style="color: #4ade80; margin: 0 0 4px 0; font-size: 16px; font-weight: 700;">Verified Pull Request Ready</h3>
-                            <p style="color: #94a3b8; margin: 0; font-size: 13px;" id="pr-desc-text">Patch verified by Flake8, Fail-to-Pass PoC & Mutation Testing.</p>
+                            <h3>Verified Pull Request Ready</h3>
+                            <p id="pr-desc-text">Patch verified by Flake8, Fail-to-Pass PoC & Mutation Testing.</p>
                         </div>
                     </div>
-                    <a href="https://github.com/Princeg0210/Ai-software-factory" target="_blank" class="btn btn-success btn-glow" id="btn-view-pr" style="text-decoration: none; font-size: 13px; font-weight: 600; padding: 10px 18px; display: inline-flex; align-items: center; gap: 8px;">
+                    <a href="https://github.com/Princeg0210/Ai-software-factory" target="_blank" class="btn btn-success" id="btn-view-pr">
                         <span>View Pull Request on GitHub ↗</span>
                     </a>
                 </div>
 
-                <!-- LIVE CONSOLE LOGS -->
-                <div class="terminal-container">
-                    <div class="terminal-header">
-                        <div class="terminal-dots">
-                            <span></span><span></span><span></span>
-                        </div>
-                        <span class="terminal-title">FSM Execution Stream & Event Log</span>
-                        <button class="btn btn-secondary btn-sm" id="btn-clear-logs" style="font-size: 11px; padding: 4px 10px; cursor: pointer;" title="Clear console">Clear Logs ⟲</button>
+                <!-- HUMAN REVIEW REQUIRED BANNER -->
+                <div class="human-gate-banner" id="human-gate-banner">
+                    <div>
+                        <h3 style="color: #d29922; font-size: 13px; font-weight: 600; margin-bottom: 2px;">⚠️ Human Co-Sign Required</h3>
+                        <p style="color: #8b949e; font-size: 12px;">Regression Risk Index &ge; 0.30. Requires manual architect review.</p>
                     </div>
-                    <div class="terminal-body" id="console-stream">
-                        <div class="log-entry log-info">[System] AI Software Factory engine online and waiting for issue ingestion...</div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-success btn-sm" id="btn-gate-approve">Approve & Merge</button>
+                        <button class="btn btn-danger btn-sm" id="btn-gate-reject">Reject Patch</button>
                     </div>
                 </div>
-            </div>
 
-            <!-- TAB 2: UNIFIED DIFF VIEWER -->
-            <div class="tab-content" id="tab-diff">
-                <div class="diff-container">
-                    <div class="diff-header">
-                        <span class="diff-filename" id="diff-filename">django/forms/models.py</span>
-                        <span class="diff-stats" id="diff-stats">+1 line, -1 line</span>
+                <!-- TABS NAVIGATION -->
+                <div class="tab-nav">
+                    <button class="tab-btn active" data-tab="tab-logs">Execution Logs</button>
+                    <button class="tab-btn" data-tab="tab-diff">Unified Patch Diff</button>
+                    <button class="tab-btn" data-tab="tab-sbfl">Ochiai SBFL Ranking</button>
+                    <button class="tab-btn" data-tab="tab-ledger">State Ledger History</button>
+                </div>
+
+                <!-- TAB 1: EXECUTION LOGS -->
+                <div class="tab-content active" id="tab-logs">
+                    <div class="terminal-container">
+                        <div class="terminal-header">
+                            <div class="terminal-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <span class="terminal-title">FSM Execution Stream & Event Log</span>
+                            <button class="btn btn-secondary btn-sm" id="btn-clear-logs" title="Clear console">Clear Logs ⟲</button>
+                        </div>
+                        <div class="terminal-body" id="console-stream">
+                            <div class="log-entry log-info">[System] AI Software Factory engine online and waiting for issue ingestion...</div>
+                        </div>
                     </div>
-                    <pre class="diff-content" id="diff-content"><code class="language-diff">--- django/forms/models.py
+                </div>
+
+                <!-- TAB 2: UNIFIED DIFF VIEWER -->
+                <div class="tab-content" id="tab-diff">
+                    <div class="diff-container">
+                        <div class="diff-header">
+                            <span id="diff-filename">django/forms/models.py</span>
+                            <span id="diff-stats">+1 line, -1 line</span>
+                        </div>
+                        <pre class="diff-content" id="diff-content"><code>--- django/forms/models.py
 +++ django/forms/models.py
 @@ -1283,2 +1283,2 @@
 -except (ValueError, TypeError, self.queryset.model.DoesNotExist):
 -    raise ValidationError(self.error_messages['invalid_choice'], code='invalid_choice')
 +except (ValueError, TypeError, self.queryset.model.DoesNotExist):
 +    raise ValidationError(self.error_messages['invalid_choice'], code='invalid_choice', params={'value': value})</code></pre>
+                    </div>
                 </div>
-            </div>
 
-            <!-- TAB 3: OCHIAI SBFL RANKINGS -->
-            <div class="tab-content" id="tab-sbfl">
-                <div class="sbfl-container">
+                <!-- TAB 3: OCHIAI SBFL RANKINGS -->
+                <div class="tab-content" id="tab-sbfl">
                     <div class="sbfl-intro">
                         <h3>Spectrum-Based Fault Localization (Ochiai Formula)</h3>
                         <p>Mathematical Suspiciousness: <code>Suspiciousness(m) = failed(m) / √(total_failed × (failed(m) + passed(m)))</code></p>
@@ -349,7 +213,7 @@
                                 <td><span class="rank-badge rank-1">#1</span></td>
                                 <td><strong>ModelChoiceField.to_python</strong></td>
                                 <td><code>django/forms/models.py</code></td>
-                                <td><span class="text-danger">1</span></td>
+                                <td><span style="color: #f85149;">1</span></td>
                                 <td>0</td>
                                 <td>
                                     <div class="sbfl-meter">
@@ -359,11 +223,11 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><span class="rank-badge rank-2">#2</span></td>
+                                <td><span class="rank-badge">#2</span></td>
                                 <td>ChoiceField.validate</td>
                                 <td><code>django/forms/fields.py</code></td>
                                 <td>0</td>
-                                <td><span class="text-success">3</span></td>
+                                <td><span style="color: #3fb950;">3</span></td>
                                 <td>
                                     <div class="sbfl-meter">
                                         <div class="sbfl-fill" style="width: 0%;"></div>
@@ -374,29 +238,81 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            <!-- TAB 4: DATABASE STATE LEDGER -->
-            <div class="tab-content" id="tab-ledger">
-                <div class="ledger-container">
-                    <div class="ledger-header">
-                        <h3>Immutable PostgreSQL State Ledger</h3>
-                        <span class="badge badge-accent">Transaction Safe</span>
+                <!-- TAB 4: DATABASE STATE LEDGER -->
+                <div class="tab-content" id="tab-ledger">
+                    <div class="sbfl-intro">
+                        <h3>Immutable State Machine Ledger Audit Trail</h3>
+                        <p>Structured transitions logged to database storage.</p>
                     </div>
                     <table class="ledger-table">
                         <thead>
                             <tr>
                                 <th>Step</th>
-                                <th>State Name</th>
-                                <th>Retry Turn</th>
-                                <th>Timestamp (UTC)</th>
-                                <th>Payload Summary</th>
+                                <th>State Transition</th>
+                                <th>Turn</th>
+                                <th>Timestamp</th>
+                                <th>Ledger Metadata Payload</th>
                             </tr>
                         </thead>
                         <tbody id="ledger-table-body">
-                            <!-- Populated dynamically -->
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: #8b949e; padding: 20px;">No transitions recorded yet. Dispatch an issue to start.</td>
+                            </tr>
                         </tbody>
                     </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- BOTTOM PANEL: DETERMINISTIC FSM STEPPER -->
+        <section class="stepper-panel">
+            <div class="stepper-header">
+                <span class="stepper-title">Deterministic FSM State Machine Pipeline</span>
+                <span style="font-size: 12px; color: #8b949e;" id="retry-counter">Attempts: 0 / 3</span>
+            </div>
+
+            <div class="stepper-container">
+                <div class="stepper-line"></div>
+                
+                <div class="step-node active" id="step-INIT">
+                    <div class="step-circle">01</div>
+                    <span class="step-label">INIT</span>
+                </div>
+                
+                <div class="step-node" id="step-LOCALIZATION">
+                    <div class="step-circle">02</div>
+                    <span class="step-label">LOCALIZATION</span>
+                </div>
+                
+                <div class="step-node" id="step-PLANNING">
+                    <div class="step-circle">03</div>
+                    <span class="step-label">PLANNING</span>
+                </div>
+                
+                <div class="step-node" id="step-REPAIR">
+                    <div class="step-circle">04</div>
+                    <span class="step-label">REPAIR</span>
+                </div>
+                
+                <div class="step-node" id="step-VERIFICATION">
+                    <div class="step-circle">05</div>
+                    <span class="step-label">VERIFICATION</span>
+                </div>
+                
+                <div class="step-node" id="step-HUMAN_REVIEW">
+                    <div class="step-circle">06</div>
+                    <span class="step-label">RISK GATE</span>
+                </div>
+                
+                <div class="step-node" id="step-MERGE">
+                    <div class="step-circle">07</div>
+                    <span class="step-label">MERGE</span>
+                </div>
+                
+                <div class="step-node" id="step-TERMINAL">
+                    <div class="step-circle">08</div>
+                    <span class="step-label">TERMINAL</span>
                 </div>
             </div>
         </section>
