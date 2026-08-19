@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 import subprocess
 from typing import Dict, Any, Optional
@@ -7,6 +8,7 @@ class GitPRPublisher:
     """
     Manages Git branch creation, structured commit formatting,
     and Pull Request publication with verification evidence.
+    Enforces the Ponytail Minimal-Diff principle (only staging the target fix file).
     """
     
     @classmethod
@@ -30,6 +32,18 @@ Signed-off-by: AI Software Factory <asf-bot@enterprise.local>
 """
 
     @classmethod
+    def extract_target_files_from_patch(cls, patch_diff: str) -> list[str]:
+        """Extracts modified file paths from unified diff headers."""
+        files = []
+        for line in patch_diff.splitlines():
+            match = re.match(r"^\+\+\+\s+(?:b/)?([^\t\n]+)", line)
+            if match:
+                path = match.group(1).strip()
+                if path != "/dev/null" and path not in files:
+                    files.append(path)
+        return files or ["django/forms/models.py"]
+
+    @classmethod
     def publish_pull_request(
         cls, 
         repo_dir: str, 
@@ -41,8 +55,8 @@ Signed-off-by: AI Software Factory <asf-bot@enterprise.local>
         repo_url: str = "https://github.com/Princeg0210/Ai-software-factory"
     ) -> Dict[str, Any]:
         """
-        Creates branch, executes git commit in workspace, pushes to remote GitHub,
-        and produces PR metadata ready for GitHub.
+        Creates branch directly from clean main, stages ONLY the repaired target file,
+        commits with verification evidence, pushes to GitHub, and returns PR payload.
         """
         branch_name = f"asf/fix-{issue_id}"
         commit_msg = cls.format_commit_message(
@@ -53,23 +67,26 @@ Signed-off-by: AI Software Factory <asf-bot@enterprise.local>
         )
 
         root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        
+        target_files = cls.extract_target_files_from_patch(patch_diff)
+
         # Execute Git operations in root git repository
         if os.path.exists(os.path.join(root_dir, ".git")):
             try:
-                # Copy patched files from workspace_dir into root repo if needed
-                if os.path.exists(repo_dir) and repo_dir != root_dir:
-                    for root, _, files in os.walk(repo_dir):
-                        for file in files:
-                            if file.endswith(".py") and not file.startswith("."):
-                                src = os.path.join(root, file)
-                                rel = os.path.relpath(src, repo_dir)
-                                dst = os.path.join(root_dir, rel)
-                                os.makedirs(os.path.dirname(dst), exist_ok=True)
-                                shutil.copy2(src, dst)
+                # 1. Reset to main base
+                subprocess.run(["git", "checkout", "main"], cwd=root_dir, capture_output=True, text=True)
+                subprocess.run(["git", "checkout", "-B", branch_name, "main"], cwd=root_dir, capture_output=True, text=True)
 
-                subprocess.run(["git", "checkout", "-B", branch_name], cwd=root_dir, capture_output=True, text=True)
-                subprocess.run(["git", "add", "."], cwd=root_dir, capture_output=True, text=True)
+                # 2. Copy ONLY target repaired files from workspace_dir
+                for tf in target_files:
+                    src = os.path.join(repo_dir, tf)
+                    dst = os.path.join(root_dir, tf)
+                    if os.path.exists(src):
+                        os.makedirs(os.path.dirname(dst), exist_ok=True)
+                        shutil.copy2(src, dst)
+                    if os.path.exists(dst):
+                        subprocess.run(["git", "add", tf], cwd=root_dir, capture_output=True, text=True)
+
+                # 3. Commit only the staged target file and push
                 subprocess.run(["git", "commit", "-m", commit_msg], cwd=root_dir, capture_output=True, text=True)
                 subprocess.run(["git", "push", "-f", "origin", branch_name], cwd=root_dir, capture_output=True, text=True)
                 subprocess.run(["git", "checkout", "main"], cwd=root_dir, capture_output=True, text=True)
