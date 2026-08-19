@@ -222,9 +222,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     const btnViewPr = document.getElementById("btn-view-pr");
                     const prDesc = document.getElementById("pr-desc-text");
                     if (prBanner && btnViewPr) {
-                        const targetUrl = `https://github.com/Princeg0210/Ai-software-factory/compare/main...asf/fix-${issueId}?expand=1`;
+                        const enteredRepo = document.getElementById("repo-url-input").value.trim() || "https://github.com/Princeg0210/Ai-software-factory";
+                        const cleanRepo = enteredRepo.replace(/\.git$/, "");
+                        
+                        // If targeting own repo or SWE-bench demo
+                        let targetUrl = `${cleanRepo}/compare/main...asf/fix-${issueId}?expand=1`;
+                        if (cleanRepo.includes("django/django")) {
+                            // Cross-fork compare against user's fix branch
+                            targetUrl = `https://github.com/Princeg0210/Ai-software-factory/compare/main...asf/fix-${issueId}?expand=1`;
+                        }
+                        
                         btnViewPr.href = targetUrl;
-                        prDesc.textContent = `Autonomous fix verified for ${issueId}. Pull request branch asf/fix-${issueId} created.`;
+                        prDesc.textContent = `Autonomous fix verified for ${issueId}. Pull request branch asf/fix-${issueId} published.`;
                         prBanner.style.display = "flex";
                         appendLog(`[GitHub PR Ready] Live PR Link: ${targetUrl}`, "success");
                     }
