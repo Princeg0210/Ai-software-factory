@@ -47,12 +47,10 @@ body {
     color: var(--text-primary);
     font-family: var(--font-sans);
     font-size: 13px;
-    line-height: 1.4;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow-x: auto;
-    overflow-y: hidden;
+    line-height: 1.5;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /* TOP NAVBAR */
@@ -60,32 +58,34 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 24px;
+    padding: 12px 24px;
     background-color: var(--bg-surface);
     border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .brand-icon {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: var(--radius-sm);
     background-color: #238636;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #ffffff;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .brand h1 {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--text-primary);
     display: inline-flex;
@@ -110,20 +110,20 @@ body {
 }
 
 .status-badge {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text-secondary);
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 3px 8px;
+    padding: 4px 10px;
     background: #0d1117;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
 }
 
 .status-dot {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
 }
 
@@ -133,22 +133,24 @@ body {
 
 /* MAIN DASHBOARD CONTAINER */
 .dashboard-container {
-    flex: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    padding: 16px 24px;
-    gap: 14px;
-    overflow-y: hidden;
-    overflow-x: auto;
-    min-width: 1100px;
+    gap: 24px;
 }
 
 .dashboard-grid {
-    flex: 1;
     display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 16px;
-    min-height: 0; /* allows inner scrolling */
+    grid-template-columns: 440px 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* PANELS & CARDS */
@@ -156,21 +158,16 @@ body {
     background-color: var(--bg-surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    overflow: hidden;
+    padding: 20px;
 }
 
 .panel-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
     border-bottom: 1px solid var(--border-muted);
-    flex-shrink: 0;
 }
 
 .panel-header h2 {
@@ -707,108 +704,118 @@ input:checked + .slider:before {
 }
 
 /* -------------------------------------------------------------
-   DETERMINISTIC FSM STATE MACHINE PIPELINE STEPPER
+   DETERMINISTIC FSM STATE MACHINE VERTICAL TIMELINE PIPELINE
 ---------------------------------------------------------------- */
 .stepper-panel {
     background-color: var(--bg-surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    padding: 12px 18px;
-    flex-shrink: 0;
-    overflow-x: auto;
+    padding: 20px 24px;
 }
 
 .stepper-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-muted);
 }
 
 .stepper-title {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.6px;
     color: var(--text-primary);
     display: flex;
     align-items: center;
-    gap: 6px;
-    white-space: nowrap;
+    gap: 8px;
 }
 
 .stepper-title::before {
     content: "";
     display: inline-block;
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background-color: var(--primary);
 }
 
 .retry-badge {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 10px;
+    padding: 3px 10px;
+    border-radius: 12px;
     background: #21262d;
     border: 1px solid var(--border);
     color: var(--text-secondary);
-    white-space: nowrap;
 }
 
-.stepper-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.stepper-timeline {
     position: relative;
-    padding: 0 8px;
-    min-width: 800px;
-    overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-left: 6px;
 }
 
 .stepper-line {
     position: absolute;
-    top: 14px;
-    left: 30px;
-    right: 30px;
-    height: 2px;
+    top: 18px;
+    bottom: 18px;
+    left: 21px;
+    width: 2px;
     background-color: #21262d;
     z-index: 0;
 }
 
 .step-node {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
     z-index: 1;
     cursor: default;
-    flex-shrink: 0;
+    position: relative;
+    transition: transform 0.2s ease;
 }
 
 .step-circle {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background-color: #161b22;
     border: 2px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--text-secondary);
-    transition: all 0.2s ease;
+    flex-shrink: 0;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.step-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-top: 4px;
 }
 
 .step-label {
-    font-size: 10px;
-    color: var(--text-tertiary);
+    font-size: 13px;
     font-weight: 600;
-    letter-spacing: 0.2px;
-    text-transform: uppercase;
-    white-space: nowrap;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+    transition: color 0.25s ease;
+}
+
+.step-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.4;
 }
 
 /* ACTIVE STATE */
@@ -816,8 +823,8 @@ input:checked + .slider:before {
     background-color: #2563eb;
     border-color: #60a5fa;
     color: #ffffff;
-    box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
-    transform: scale(1.08);
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.6);
+    transform: scale(1.1);
 }
 
 .step-node.active .step-label {
@@ -843,7 +850,7 @@ input:checked + .slider:before {
     background-color: #da3633;
     border-color: #f85149;
     color: #ffffff;
-    box-shadow: 0 0 10px rgba(218, 54, 51, 0.5);
+    box-shadow: 0 0 12px rgba(218, 54, 51, 0.6);
 }
 
 .step-node.failed .step-label {

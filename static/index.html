@@ -265,59 +265,86 @@
             </section>
         </div>
 
-        <!-- BOTTOM PANEL: DETERMINISTIC FSM STEPPER -->
+        <!-- BOTTOM PANEL: DETERMINISTIC FSM VERTICAL TIMELINE -->
         <section class="stepper-panel">
             <div class="stepper-header">
                 <span class="stepper-title">Deterministic FSM State Machine Pipeline</span>
                 <span class="retry-badge" id="retry-counter">Attempts: 0 / 3</span>
             </div>
 
-            <div class="stepper-container">
+            <div class="stepper-timeline">
                 <div class="stepper-line"></div>
                 
                 <div class="step-node active" id="step-INIT">
                     <div class="step-circle">01</div>
-                    <span class="step-label">INIT</span>
+                    <div class="step-info">
+                        <span class="step-label">01. Issue Ingestion & State Init</span>
+                        <span class="step-desc">Validates issue payload, indexes repository workspace, and initializes state ledger.</span>
+                    </div>
                 </div>
 
                 <div class="step-node" id="step-SPEC_READY">
                     <div class="step-circle">02</div>
-                    <span class="step-label">SPEC</span>
+                    <div class="step-info">
+                        <span class="step-label">02. Formal Specification Contract</span>
+                        <span class="step-desc">Synthesizes formal preconditions, postconditions, and complexity caps.</span>
+                    </div>
                 </div>
                 
                 <div class="step-node" id="step-LOCALIZATION">
                     <div class="step-circle">03</div>
-                    <span class="step-label">LOCALIZE</span>
+                    <div class="step-info">
+                        <span class="step-label">03. Spectrum-Based Fault Localization</span>
+                        <span class="step-desc">Executes Ochiai SBFL algorithm and AST symbol ranking to pinpoint defective functions.</span>
+                    </div>
                 </div>
                 
                 <div class="step-node" id="step-PLANNING">
                     <div class="step-circle">04</div>
-                    <span class="step-label">PLAN</span>
+                    <div class="step-info">
+                        <span class="step-label">04. Planning & Ponytail Invariants</span>
+                        <span class="step-desc">Applies "Lazy Senior Developer" rules: enforces YAGNI, stdlib preference, and minimal diff.</span>
+                    </div>
                 </div>
                 
                 <div class="step-node" id="step-REPAIR">
                     <div class="step-circle">05</div>
-                    <span class="step-label">REPAIR</span>
+                    <div class="step-info">
+                        <span class="step-label">05. Candidate Repair Synthesis</span>
+                        <span class="step-desc">Generates exact search-and-replace block for the defective code section.</span>
+                    </div>
                 </div>
                 
                 <div class="step-node" id="step-VERIFICATION">
                     <div class="step-circle">06</div>
-                    <span class="step-label">VERIFY</span>
+                    <div class="step-info">
+                        <span class="step-label">06. Multi-Tier Independent Verification</span>
+                        <span class="step-desc">Executes Flake8 syntax gate, pytest regression test runner, Fail-to-Pass PoC & AST mutation testing.</span>
+                    </div>
                 </div>
                 
                 <div class="step-node" id="step-HUMAN_REVIEW">
                     <div class="step-circle">07</div>
-                    <span class="step-label">RISK GATE</span>
+                    <div class="step-info">
+                        <span class="step-label">07. Regression Risk Index & Gating</span>
+                        <span class="step-desc">Computes RRI score. Low Risk (&lt; 0.30) auto-merges; High Risk (&ge; 0.30) triggers human review.</span>
+                    </div>
                 </div>
                 
                 <div class="step-node" id="step-MERGE">
                     <div class="step-circle">08</div>
-                    <span class="step-label">MERGE</span>
+                    <div class="step-info">
+                        <span class="step-label">08. Git Branch & Signed Commit</span>
+                        <span class="step-desc">Stages surgical fix, creates branch with verification evidence commit message, and pushes to remote.</span>
+                    </div>
                 </div>
                 
                 <div class="step-node" id="step-TERMINAL">
                     <div class="step-circle">09</div>
-                    <span class="step-label">TERMINAL</span>
+                    <div class="step-info">
+                        <span class="step-label">09. Terminal State & GitHub PR</span>
+                        <span class="step-desc">Fix verified and ready for Pull Request review and deployment.</span>
+                    </div>
                 </div>
             </div>
         </section>
