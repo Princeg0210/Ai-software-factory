@@ -115,6 +115,27 @@ document.addEventListener("DOMContentLoaded", () => {
         btnLaunch.innerHTML = `<span class="spinner"></span> <span>Orchestrating...</span>`;
         resetStepper();
         humanGateBanner.classList.remove("show");
+        
+        const prBanner = document.getElementById("pr-success-banner");
+        if (prBanner) prBanner.style.display = "none";
+
+        // Reset Telemetry Cards to Live Calculating State
+        if (cardRriScore) {
+            cardRriScore.textContent = "...";
+            cardRriBar.style.width = "0%";
+            cardRriTag.textContent = "CALCULATING";
+            cardRriTag.className = "metric-tag tag-low";
+        }
+        if (cardLintStatus) {
+            cardLintStatus.textContent = "CHECKING";
+            cardLintStatus.style.color = "var(--text-secondary)";
+            cardLintBadge.textContent = "IN PROGRESS";
+        }
+        if (cardMutationScore) {
+            cardMutationScore.textContent = "...";
+            cardMutationBar.style.width = "0%";
+            cardMutationCaption.textContent = mutationTesting ? "Injecting AST mutants in sandbox..." : "Mutation Testing Gate Disabled";
+        }
 
         appendLog(`Ingesting issue ${currentIssueId} to POST /api/v1/factory/issues...`, "info");
 
