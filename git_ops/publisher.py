@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 from typing import Dict, Any, Optional
 
@@ -40,7 +41,8 @@ Signed-off-by: AI Software Factory <asf-bot@enterprise.local>
         repo_url: str = "https://github.com/Princeg0210/Ai-software-factory"
     ) -> Dict[str, Any]:
         """
-        Creates branch, executes git commit in workspace, and produces PR metadata ready for GitHub.
+        Creates branch, executes git commit in workspace, pushes to remote GitHub,
+        and produces PR metadata ready for GitHub.
         """
         branch_name = f"asf/fix-{issue_id}"
         commit_msg = cls.format_commit_message(
@@ -50,14 +52,29 @@ Signed-off-by: AI Software Factory <asf-bot@enterprise.local>
             mutation_score=mutation_report.get("mutation_score", 1.0)
         )
 
-        # Execute Git operations in the workspace if it is a git repo
-        if os.path.exists(os.path.join(repo_dir, ".git")):
+        root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        
+        # Execute Git operations in root git repository
+        if os.path.exists(os.path.join(root_dir, ".git")):
             try:
-                subprocess.run(["git", "checkout", "-B", branch_name], cwd=repo_dir, capture_output=True, text=True)
-                subprocess.run(["git", "add", "."], cwd=repo_dir, capture_output=True, text=True)
-                subprocess.run(["git", "commit", "-m", commit_msg], cwd=repo_dir, capture_output=True, text=True)
+                # Copy patched files from workspace_dir into root repo if needed
+                if os.path.exists(repo_dir) and repo_dir != root_dir:
+                    for root, _, files in os.walk(repo_dir):
+                        for file in files:
+                            if file.endswith(".py") and not file.startswith("."):
+                                src = os.path.join(root, file)
+                                rel = os.path.relpath(src, repo_dir)
+                                dst = os.path.join(root_dir, rel)
+                                os.makedirs(os.path.dirname(dst), exist_ok=True)
+                                shutil.copy2(src, dst)
+
+                subprocess.run(["git", "checkout", "-B", branch_name], cwd=root_dir, capture_output=True, text=True)
+                subprocess.run(["git", "add", "."], cwd=root_dir, capture_output=True, text=True)
+                subprocess.run(["git", "commit", "-m", commit_msg], cwd=root_dir, capture_output=True, text=True)
+                subprocess.run(["git", "push", "-f", "origin", branch_name], cwd=root_dir, capture_output=True, text=True)
+                subprocess.run(["git", "checkout", "main"], cwd=root_dir, capture_output=True, text=True)
             except Exception as e:
-                print(f"[GitPRPublisher] Git local commit note: {e}")
+                print(f"[GitPRPublisher] Git operations note: {e}")
 
         # Construct repo PR link
         clean_repo = repo_url.rstrip(".git")

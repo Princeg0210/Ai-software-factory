@@ -38,8 +38,9 @@ class FSMOrchestrator:
         self.ledger = StateLedger(db=db_session)
         self.state = FSMState.INIT
         self.retry_count = 0
-        self.max_retries = issue_payload.get("verification_settings", {}).get("max_repair_retries", 3)
-        self.risk_threshold = issue_payload.get("verification_settings", {}).get("risk_threshold", 0.30)
+        v_settings = issue_payload.get("verification_settings") or {}
+        self.max_retries = v_settings.get("max_repair_retries", 3)
+        self.risk_threshold = v_settings.get("risk_threshold", 0.30)
         
         # Ensure repository workspace is pre-populated
         self._ensure_repository_scaffold()

@@ -1,112 +1,88 @@
 import ast
 import os
-from typing import Dict, List, Any, Optional
+from typing import Dict, Any, List, Optional
 
 class SymbolMapBuilder:
     """
-    Constructs a structural symbolic map of a Python repository.
-    Extracts classes, methods, line offsets, argument signatures, and docstrings.
+    Constructs an Abstract Syntax Tree (AST) symbol graph of the codebase,
+    extracting class hierarchies, method signatures, line ranges, and docstrings.
     """
-    def __init__(self, root_dir: str):
-        self.root_dir = root_dir
-        self.index: Dict[str, Any] = {
-            "files": {},
-            "classes": {},
-            "methods": {}
-        }
+    def __init__(self, repo_dir: str):
+        self.repo_dir = os.path.abspath(repo_dir)
 
     def scan_directory(self) -> Dict[str, Any]:
-        for root, _, files in os.walk(self.root_dir):
-            # Skip hidden and cache folders
-            if "/." in root or "/__pycache__" in root or "/venv" in root or "/.git" in root:
-                continue
+        """
+        Scans all python files in repo_dir and parses their AST structure.
+        """
+        files_map = {}
+        for root, _, filenames in os.walk(self.repo_dir):
+            for fn in filenames:
+                if fn.endswith(".py") and fn != "__init__.py":
+                    rel_path = os.path.relpath(os.path.join(root, fn), self.repo_dir)
+                    if not rel_path.startswith("tests") and not rel_path.startswith("."):
+                        symbols = self.parse_file_symbols(rel_path)
+                        files_map[rel_path] = symbols
 
-            for file in files:
-                if file.endswith(".py"):
-                    full_path = os.path.join(root, file)
-                    rel_path = os.path.relpath(full_path, self.root_dir)
-                    self.index_file(full_path, rel_path)
+        # If no non-test files found, fallback to scanning all python files
+        if not files_map:
+            for root, _, filenames in os.walk(self.repo_dir):
+                for fn in filenames:
+                    if fn.endswith(".py"):
+                        rel_path = os.path.relpath(os.path.join(root, fn), self.repo_dir)
+                        symbols = self.parse_file_symbols(rel_path)
+                        files_map[rel_path] = symbols
 
-        return self.index
+        return {
+            "total_files": len(files_map),
+            "files": files_map
+        }
 
-    def index_file(self, full_path: str, rel_path: str):
+    def parse_file_symbols(self, rel_path: str) -> Dict[str, Any]:
+        """
+        Extracts classes, methods, docstrings, and line bounds from a file.
+        """
+        full_path = os.path.join(self.repo_dir, rel_path)
+        if not os.path.exists(full_path):
+            return {}
+
+        with open(full_path, "r", encoding="utf-8", errors="ignore") as f:
+            code = f.read()
+
         try:
-            with open(full_path, "r", encoding="utf-8", errors="ignore") as f:
-                content = f.read()
+            tree = ast.parse(code, filename=rel_path)
+        except Exception:
+            return {"classes": [], "functions": []}
 
-            tree = ast.parse(content, filename=rel_path)
-            file_classes = []
-            file_methods = []
+        classes = []
+        functions = []
 
-            for node in ast.iter_child_nodes(tree):
-                if isinstance(node, ast.ClassDef):
-                    class_info = self._extract_class_info(node, rel_path)
-                    self.index["classes"][f"{rel_path}:{node.name}"] = class_info
-                    file_classes.append(node.name)
+        for node in tree.body:
+            if isinstance(node, ast.ClassDef):
+                methods = []
+                for item in node.body:
+                    if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                        methods.append({
+                            "name": item.name,
+                            "start_line": item.lineno,
+                            "end_line": getattr(item, "end_lineno", item.lineno),
+                            "docstring": ast.get_docstring(item)
+                        })
+                classes.append({
+                    "name": node.name,
+                    "start_line": node.lineno,
+                    "end_line": getattr(node, "end_lineno", node.lineno),
+                    "docstring": ast.get_docstring(node),
+                    "methods": methods
+                })
+            elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                functions.append({
+                    "name": node.name,
+                    "start_line": node.lineno,
+                    "end_line": getattr(node, "end_lineno", node.lineno),
+                    "docstring": ast.get_docstring(node)
+                })
 
-                    for item in node.body:
-                        if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                            method_info = self._extract_method_info(item, rel_path, parent_class=node.name)
-                            key = f"{rel_path}:{node.name}.{item.name}"
-                            self.index["methods"][key] = method_info
-                            file_methods.append(f"{node.name}.{item.name}")
-
-                elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    func_info = self._extract_method_info(node, rel_path, parent_class=None)
-                    key = f"{rel_path}:{node.name}"
-                    self.index["methods"][key] = func_info
-                    file_methods.append(node.name)
-
-            self.index["files"][rel_path] = {
-                "classes": file_classes,
-                "methods": file_methods,
-                "lines_count": len(content.splitlines())
-            }
-
-        except Exception as e:
-            # File may contain syntax error
-            self.index["files"][rel_path] = {"error": str(e)}
-
-    def _extract_class_info(self, node: ast.ClassDef, file_path: str) -> Dict[str, Any]:
-        methods = [n.name for n in node.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]
-        bases = [ast.unparse(b) for b in node.bases] if hasattr(ast, "unparse") else []
         return {
-            "name": node.name,
-            "file": file_path,
-            "start_line": node.lineno,
-            "end_line": getattr(node, "end_lineno", node.lineno),
-            "bases": bases,
-            "methods": methods,
-            "docstring": ast.get_docstring(node) or ""
+            "classes": classes,
+            "functions": functions
         }
-
-    def _extract_method_info(
-        self, 
-        node: ast.FunctionDef, 
-        file_path: str, 
-        parent_class: Optional[str] = None
-    ) -> Dict[str, Any]:
-        args = [a.arg for a in node.args.args]
-        return {
-            "name": node.name,
-            "file": file_path,
-            "parent_class": parent_class,
-            "start_line": node.lineno,
-            "end_line": getattr(node, "end_lineno", node.lineno),
-            "args": args,
-            "docstring": ast.get_docstring(node) or ""
-        }
-
-    def search_class(self, query: str) -> List[Dict[str, Any]]:
-        results = []
-        for key, info in self.index["classes"].items():
-            if query.lower() in info["name"].lower():
-                results.append(info)
-        return results
-
-    def search_method(self, query: str) -> List[Dict[str, Any]]:
-        results = []
-        for key, info in self.index["methods"].items():
-            if query.lower() in info["name"].lower():
-                results.append(info)
-        return results
