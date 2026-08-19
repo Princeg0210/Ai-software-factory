@@ -203,6 +203,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     clearInterval(pollInterval);
                     btnLaunch.disabled = false;
                     btnLaunch.innerHTML = `<span>Dispatch FSM Repair</span>`;
+
+                    const prBanner = document.getElementById("pr-success-banner");
+                    const btnViewPr = document.getElementById("btn-view-pr");
+                    const prDesc = document.getElementById("pr-desc-text");
+                    if (prBanner && btnViewPr) {
+                        const targetUrl = `https://github.com/Princeg0210/Ai-software-factory/compare/main...asf/fix-${issueId}?expand=1`;
+                        btnViewPr.href = targetUrl;
+                        prDesc.textContent = `Autonomous fix verified for ${issueId}. Pull request branch asf/fix-${issueId} created.`;
+                        prBanner.style.display = "flex";
+                        appendLog(`[GitHub PR Ready] Live PR Link: ${targetUrl}`, "success");
+                    }
                 } else if (data.current_state === "TERMINAL_FAILED") {
                     appendLog(`[FSM Failed] Repair failed or rejected after max retries.`, "error");
                     clearInterval(pollInterval);

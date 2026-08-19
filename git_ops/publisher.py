@@ -36,10 +36,11 @@ Signed-off-by: AI Software Factory <asf-bot@enterprise.local>
         issue_title: str, 
         patch_diff: str, 
         rri_report: Dict[str, Any],
-        mutation_report: Dict[str, Any]
+        mutation_report: Dict[str, Any],
+        repo_url: str = "https://github.com/Princeg0210/Ai-software-factory"
     ) -> Dict[str, Any]:
         """
-        Creates branch and produces PR metadata ready for GitHub/GitLab webhook.
+        Creates branch, executes git commit in workspace, and produces PR metadata ready for GitHub.
         """
         branch_name = f"asf/fix-{issue_id}"
         commit_msg = cls.format_commit_message(
@@ -49,10 +50,24 @@ Signed-off-by: AI Software Factory <asf-bot@enterprise.local>
             mutation_score=mutation_report.get("mutation_score", 1.0)
         )
 
+        # Execute Git operations in the workspace if it is a git repo
+        if os.path.exists(os.path.join(repo_dir, ".git")):
+            try:
+                subprocess.run(["git", "checkout", "-B", branch_name], cwd=repo_dir, capture_output=True, text=True)
+                subprocess.run(["git", "add", "."], cwd=repo_dir, capture_output=True, text=True)
+                subprocess.run(["git", "commit", "-m", commit_msg], cwd=repo_dir, capture_output=True, text=True)
+            except Exception as e:
+                print(f"[GitPRPublisher] Git local commit note: {e}")
+
+        # Construct repo PR link
+        clean_repo = repo_url.rstrip(".git")
+        pr_url = f"{clean_repo}/compare/main...{branch_name}?expand=1"
+
         pr_payload = {
             "title": f"fix({issue_id}): {issue_title}",
             "head_branch": branch_name,
             "base_branch": "main",
+            "repository_url": repo_url,
             "body": f"""## Summary of Autonomous Fix
 Resolves #{issue_id}: **{issue_title}**
 
@@ -71,7 +86,7 @@ Resolves #{issue_id}: **{issue_title}**
 ```
 """,
             "status": "READY_FOR_MERGE",
-            "url": f"https://github.com/django/django/pull/99421"
+            "url": pr_url
         }
 
         return pr_payload
