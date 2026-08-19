@@ -72,16 +72,20 @@ body {
     gap: 12px;
 }
 
-.brand-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-sm);
-    background-color: #238636;
+.brand-logo-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #ffffff;
-    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.brand-logo-wrapper:hover {
+    transform: scale(1.05);
+}
+
+.brand-logo-svg {
+    filter: drop-shadow(0 2px 8px rgba(56, 189, 248, 0.25));
 }
 
 .brand h1 {

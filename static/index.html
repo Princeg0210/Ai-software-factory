@@ -10,7 +10,28 @@
     <!-- TOP NAVBAR -->
     <header class="top-nav">
         <div class="brand">
-            <div class="brand-icon">⚡</div>
+            <div class="brand-logo-wrapper">
+                <svg class="brand-logo-svg" width="34" height="34" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="asf-border-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#38bdf8" />
+                            <stop offset="50%" stop-color="#818cf8" />
+                            <stop offset="100%" stop-color="#34d399" />
+                        </linearGradient>
+                        <linearGradient id="asf-core-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#38bdf8" />
+                            <stop offset="100%" stop-color="#34d399" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Background Container -->
+                    <rect x="2" y="2" width="28" height="28" rx="8" fill="#161b22" stroke="url(#asf-border-grad)" stroke-width="1.5" />
+                    <!-- Factory Pulse Wave / Circuit Line -->
+                    <path d="M7 16H10.5L13.5 10.5L18.5 21.5L21.5 16H25" stroke="url(#asf-core-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <!-- Core Quantum Nodes -->
+                    <circle cx="13.5" cy="10.5" r="1.8" fill="#38bdf8" />
+                    <circle cx="18.5" cy="21.5" r="1.8" fill="#34d399" />
+                </svg>
+            </div>
             <h1>AI Software Factory <span class="version-tag">v1.0 Production</span></h1>
         </div>
 
