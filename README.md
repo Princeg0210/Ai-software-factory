@@ -291,6 +291,30 @@ pytest tests/test_rri_and_review.py -v
 
 # Run AST Mutation Testing tests
 pytest tests/test_mutation.py -v
+
+
+
+
+
+## The Substitute option after installing requirements.py
+
+#(Run with Virtual Environment (Recommended)
+1- source .venv/bin/activate
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+
+
+#Run Directly (One-Liner without activating)
+2-.venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+
+
+#Run with Anaconda Python
+3-/opt/anaconda3/bin/python3 -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+
+
+
 ```
 
 ---
