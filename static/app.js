@@ -57,6 +57,20 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    const btnLoadMyRepo = document.getElementById("btn-load-my-repo");
+
+    // Load User Repo preset
+    if (btnLoadMyRepo) {
+        btnLoadMyRepo.addEventListener("click", () => {
+            document.getElementById("issue-id-input").value = "ASF-101";
+            document.getElementById("repo-url-input").value = "https://github.com/Princeg0210/Ai-software-factory";
+            document.getElementById("branch-input").value = "main";
+            document.getElementById("issue-title-input").value = "Fix ModelChoiceField validation params to include invalid choice value";
+            document.getElementById("issue-desc-input").value = "ModelChoiceField.to_python method raises ValidationError without passing params={'value': value}. Update ValidationError to format error template dynamically.";
+            appendLog("Auto-filled repository payload for Princeg0210/Ai-software-factory", "success");
+        });
+    }
+
     // Load Sample preset
     btnLoadSample.addEventListener("click", () => {
         document.getElementById("issue-id-input").value = "django-13933";
