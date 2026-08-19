@@ -195,10 +195,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const data = await res.json();
                 updateStepper(data.current_state, data.history);
-                retryCounter.textContent = `Attempts: ${data.retry_count} / 3`;
-
-                // Update ledger table
+                // Update ledger and SBFL tables
                 renderLedgerTable(data.history);
+                renderSbflTable(data.history);
 
                 // Fetch diff details if past repair state
                 if (["REPAIR", "VERIFICATION", "HUMAN_REVIEW", "MERGE", "TERMINAL_SUCCESS"].includes(data.current_state)) {
@@ -295,6 +294,34 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             ledgerTableBody.appendChild(tr);
         });
+    }
+
+    function renderSbflTable(history) {
+        const sbflBody = document.getElementById("sbfl-table-body");
+        if (!sbflBody || !history) return;
+        const locEntry = history.find(h => h.state === "LOCALIZATION");
+        if (locEntry && locEntry.payload && locEntry.payload.sbfl_rankings && locEntry.payload.sbfl_rankings.length > 0) {
+            sbflBody.innerHTML = "";
+            locEntry.payload.sbfl_rankings.forEach((rank, idx) => {
+                const score = (rank.suspiciousness || 0).toFixed(4);
+                const widthPct = Math.min((rank.suspiciousness || 0) * 100, 100);
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><span class="rank-badge rank-${idx + 1}">#${idx + 1}</span></td>
+                    <td><strong>${rank.target || rank.symbol}</strong></td>
+                    <td><code>${rank.file}</code></td>
+                    <td><span class="text-danger">${rank.failed_tests_hit || 0}</span></td>
+                    <td><span class="text-success">${rank.passed_tests_hit || 0}</span></td>
+                    <td>
+                        <div class="sbfl-meter">
+                            <div class="sbfl-fill" style="width: ${widthPct}%;"></div>
+                            <span>${score}</span>
+                        </div>
+                    </td>
+                `;
+                sbflBody.appendChild(tr);
+            });
+        }
     }
 
     // Human Review Actions
