@@ -1,34 +1,30 @@
-# Secure, Hardened Dockerfile for AI Software Factory (ASF)
-FROM python:3.12-slim
+# Production Dockerfile for Koyeb / Container Cloud Deployment
+FROM python:3.11-slim
 
-# Prevent interactive prompts
-ENV DEBIAN_FRONTEND=noninteractive \
-    PYTHONUNBUFFERED=1
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PORT=8000
 
-# Install core build dependencies, git, and libpq for postgres
+# Install system dependencies (git, build tools for git-ops)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     build-essential \
-    libpq-dev \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Add non-root security user
-RUN useradd -m -s /bin/bash sandbox
+# Set working directory
+WORKDIR /app
 
-WORKDIR /workspace
-
-# Install dependencies
+# Install python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy source code
+# Copy application source code
 COPY . .
-RUN chown -R sandbox:sandbox /workspace
 
-# Switch to non-root sandbox execution user
-USER sandbox
-
-# Default execution entrypoint for web API
+# Expose port
 EXPOSE 8000
-CMD ["python3", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# Start FastAPI application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
